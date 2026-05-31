@@ -807,40 +807,75 @@ func AddBallEvent(c *gin.Context) {
 	//fmt.Printf("ExtraType: %#v\n", event.ExtraType)
 
 	txErr := database.Tx(func(tx *sqlx.Tx) error {
-		fmt.Println("1")
+		//fmt.Println("1")
 		err = dbHelper.InsertBallEvent(tx, event)
 		if err != nil {
 			return err
 		}
 
-		fmt.Println("2")
+		//fmt.Println("2")
 		err = dbHelper.UpdateInningsAfterBall(tx, event.InningsID, inningsUpdate)
 		if err != nil {
 			return err
 		}
 
-		fmt.Println("3")
-		fmt.Printf("battingUpdate = %+v\n", battingUpdate)
-		fmt.Printf("event = %+v\n", event)
-		err = dbHelper.UpdateBattingScorecardAfterBall(tx, event.InningsID, event.StrikerID, battingUpdate)
-		if err != nil {
-			return err
+		//fmt.Println("3")
+		// to deal with the issue of getting non-striker out and upding striker as out
+		if event.IsWicket && event.WicketType != nil && *event.WicketType == "RUN_OUT" &&
+			event.DismissedPlayerID != nil && *event.DismissedPlayerID != event.StrikerID {
+
+			strikerUpdate := models.BattingScorecardUpdate{
+				RunsIncrement:  battingUpdate.RunsIncrement,
+				BallsIncrement: battingUpdate.BallsIncrement,
+				FoursIncrement: battingUpdate.FoursIncrement,
+				SixesIncrement: battingUpdate.SixesIncrement,
+			}
+
+			err = dbHelper.UpdateBattingScorecardAfterBall(tx, event.InningsID, event.StrikerID, strikerUpdate)
+			if err != nil {
+				return err
+			}
+
+			dismissedUpdate := models.BattingScorecardUpdate{
+				IsOut:               true,
+				DismissalType:       battingUpdate.DismissalType,
+				DismissedByBowlerID: battingUpdate.DismissedByBowlerID,
+				FielderID:           battingUpdate.FielderID,
+			}
+
+			err = dbHelper.UpdateBattingScorecardAfterBall(tx, event.InningsID,
+				*event.DismissedPlayerID, dismissedUpdate)
+			if err != nil {
+				return err
+			}
+
+		} else {
+
+			err = dbHelper.UpdateBattingScorecardAfterBall(
+				tx,
+				event.InningsID,
+				event.StrikerID,
+				battingUpdate,
+			)
+			if err != nil {
+				return err
+			}
 		}
 
-		fmt.Println("4")
+		//fmt.Println("4")
 
 		err = dbHelper.UpdateBowlingScorecardAfterBall(tx, event.InningsID, event.BowlerID, bowlingUpdate)
 		if err != nil {
 			return err
 		}
 
-		fmt.Println("5")
+		//fmt.Println("5")
 		err = dbHelper.UpdateLiveMatchAfterBall(tx, match.MatchID, liveMatchUpdate)
 		if err != nil {
 			return err
 		}
 
-		fmt.Println("6")
+		//fmt.Println("6")
 		if isInningsCompleted {
 			err = dbHelper.CompleteInnings(tx, event.InningsID)
 			if err != nil {
@@ -848,7 +883,7 @@ func AddBallEvent(c *gin.Context) {
 			}
 		}
 
-		fmt.Println("7")
+		//fmt.Println("7")
 		if isMatchCompleted {
 			err = dbHelper.CompleteMatch(tx, match.MatchID, winnerTeamID)
 			if err != nil {
