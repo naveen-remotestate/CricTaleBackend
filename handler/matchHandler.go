@@ -1020,7 +1020,16 @@ func validateMatchState(match *models.MatchResponse) error {
 }
 
 func IsStrikeRotating(event models.BallEventInsert) bool {
-	return event.TotalRuns%2 == 1
+
+	if event.ExtraType != nil {
+		switch *event.ExtraType {
+		case "WIDE", "NO_BALL":
+			return event.ExtraRuns%2 == 1
+		case "BYE", "LEG_BYE":
+			return event.ExtraRuns%2 == 1
+		}
+	}
+	return event.RunsOffBat%2 == 1
 }
 
 func StartSecondInnings(c *gin.Context) {
@@ -1266,5 +1275,26 @@ func GetScorecard(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"scorecard": response,
+	})
+}
+
+func GetBallEvents(c *gin.Context) {
+	inningsID := c.Param("inningsID")
+	if inningsID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "inningsID required",
+		})
+		return
+	}
+	ballEvents, err := dbHelper.GetBallEvents(inningsID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"ball_events": ballEvents,
 	})
 }

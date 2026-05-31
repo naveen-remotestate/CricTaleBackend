@@ -254,3 +254,31 @@ type MatchScorecardResponse struct {
 	FirstInnings  *InningsScorecard `json:"first_innings,omitempty"`
 	SecondInnings *InningsScorecard `json:"second_innings,omitempty"`
 }
+
+type BallEventResponse struct {
+	ID                     string    `db:"id" json:"id"`
+	BallSequence           int       `db:"ball_sequence" json:"ball_sequence"`
+	OverNo                 int       `db:"over_no" json:"over_no"`
+	BallInOver             int       `db:"ball_in_over" json:"ball_in_over"`
+	StrikerID              string    `db:"striker_id" json:"striker_id"`
+	StrikerName            *string   `db:"striker_name" json:"striker_name"`
+	NonStrikerID           string    `db:"non_striker_id" json:"non_striker_id"`
+	NonStrikerName         *string   `db:"non_striker_name" json:"non_striker_name"`
+	BowlerID               string    `db:"bowler_id" json:"bowler_id"`
+	BowlerName             *string   `db:"bowler_name" json:"bowler_name"`
+	RunsOffBat             int       `db:"runs_off_bat" json:"runs_off_bat"`
+	ExtraRuns              int       `db:"extra_runs" json:"extra_runs"`
+	TotalRuns              int       `db:"total_runs" json:"total_runs"`
+	ExtraType              *string   `db:"extra_type" json:"extra_type"`
+	IsLegalDelivery        bool      `db:"is_legal_delivery" json:"is_legal_delivery"`
+	IsBoundaryFour         bool      `db:"is_boundary_four" json:"is_boundary_four"`
+	IsBoundarySix          bool      `db:"is_boundary_six" json:"is_boundary_six"`
+	IsDotBall              bool      `db:"is_dot_ball" json:"is_dot_ball"`
+	IsWicket               bool      `db:"is_wicket" json:"is_wicket"`
+	WicketType             *string   `db:"wicket_type" json:"wicket_type"`
+	DismissedPlayerID      *string   `db:"dismissed_player_id" json:"dismissed_player_id"`
+	DismissedPlayerName    *string   `db:"dismissed_player_name" json:"dismissed_player_name"`
+	DismissedByFielderID   *string   `db:"dismissed_by_fielder_id" json:"dismissed_by_fielder_id"`
+	DismissedByFielderName *string   `db:"dismissed_by_fielder_name" json:"dismissed_by_fielder_name"`
+	BowledAt               time.Time `db:"bowled_at" json:"bowled_at"`
+}

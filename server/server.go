@@ -38,6 +38,7 @@ func StartServer(serverPort string) (router *gin.Engine) {
 	router.GET("/matches/:matchID", handler.GetMatchByID)
 
 	router.GET("/matches/:matchID/scorecard", handler.GetScorecard)
+	router.GET("/innings/:inningsID/ball-events", handler.GetBallEvents)
 
 	auth := router.Group("/")
 	auth.Use(middleware.AuthMiddleware())
@@ -48,6 +49,7 @@ func StartServer(serverPort string) (router *gin.Engine) {
 	auth.POST("/create-match", handler.CreateMatch)
 
 	auth.POST("/ball-event", handler.AddBallEvent)
+
 	auth.POST("/start-second-innings", handler.StartSecondInnings)
 
 	profile := auth.Group("/player")

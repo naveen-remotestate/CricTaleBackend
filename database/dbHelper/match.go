@@ -989,3 +989,56 @@ func GetMatchInnings(matchID string) ([]models.InningsScorecard, error) {
 	}
 	return innings, nil
 }
+
+func GetBallEvents(inningsID string) ([]models.BallEventResponse, error) {
+
+	query := `
+		SELECT
+			be.id,
+			be.ball_sequence,
+			be.over_no,
+			be.ball_in_over,
+			be.striker_id,
+			s.full_name AS striker_name,
+			be.non_striker_id,
+			ns.full_name AS non_striker_name,
+			be.bowler_id,
+			b.full_name AS bowler_name,
+			be.runs_off_bat,
+			be.extra_runs,
+			be.total_runs,
+			be.extra_type,
+			be.is_legal_delivery,
+			be.is_boundary_four,
+			be.is_boundary_six,
+			be.is_dot_ball,
+			be.is_wicket,
+			be.wicket_type,
+			be.dismissed_player_id,
+			dp.full_name AS dismissed_player_name,
+			be.dismissed_by_fielder_id,
+			f.full_name AS dismissed_by_fielder_name,
+			be.bowled_at
+		FROM ball_events be
+		LEFT JOIN users s
+			ON s.user_id = be.striker_id
+		LEFT JOIN users ns
+			ON ns.user_id = be.non_striker_id
+		LEFT JOIN users b
+			ON b.user_id = be.bowler_id
+		LEFT JOIN users dp
+			ON dp.user_id = be.dismissed_player_id
+		LEFT JOIN users f
+			ON f.user_id = be.dismissed_by_fielder_id
+		WHERE be.innings_id = $1
+		ORDER BY be.ball_sequence ASC
+	`
+
+	var ballEvents []models.BallEventResponse
+	err := database.DB.Select(&ballEvents, query, inningsID)
+	if err != nil {
+		return nil, err
+	}
+
+	return ballEvents, nil
+}
