@@ -482,8 +482,7 @@ func AddBallEvent(c *gin.Context) {
 
 			inningsUpdate.WidesIncrement = 1
 
-			inningsUpdate.ExtrasIncrement =
-				event.ExtraRuns + 1
+			inningsUpdate.ExtrasIncrement = event.ExtraRuns + 1
 
 		case "NO_BALL":
 
@@ -493,19 +492,14 @@ func AddBallEvent(c *gin.Context) {
 
 		case "BYE":
 
-			inningsUpdate.ByesIncrement =
-				event.ExtraRuns
-
-			inningsUpdate.ExtrasIncrement =
-				event.ExtraRuns
+			inningsUpdate.ByesIncrement = event.ExtraRuns
+			inningsUpdate.ExtrasIncrement = event.ExtraRuns
 
 		case "LEG_BYE":
 
-			inningsUpdate.LegByesIncrement =
-				event.ExtraRuns
+			inningsUpdate.LegByesIncrement = event.ExtraRuns
 
-			inningsUpdate.ExtrasIncrement =
-				event.ExtraRuns
+			inningsUpdate.ExtrasIncrement = event.ExtraRuns
 		}
 	}
 
@@ -649,7 +643,8 @@ func AddBallEvent(c *gin.Context) {
 
 	/// new bowler selection on over complition
 	isOverCompleted := event.IsLegalDelivery && newLegalBalls%6 == 0
-	if isOverCompleted {
+	if isOverCompleted &&
+		!isInningsCompleted {
 
 		if req.NextBowlerID == "" {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -703,7 +698,7 @@ func AddBallEvent(c *gin.Context) {
 	}
 
 	//-----checks that player is not already out
-	if event.IsWicket {
+	if event.IsWicket && !isInningsCompleted {
 		if req.NextBatsmanID == "" {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": "next_batsman_id required",
@@ -930,15 +925,6 @@ func validateBallEventRequest(req models.AddBallEventRequest) error {
 			return fmt.Errorf("dismissed_player_id should be empty")
 		}
 	}
-	// next batsman on falling of wicket
-	if req.IsWicket {
-		if req.NextBatsmanID == "" {
-			return fmt.Errorf(
-				"next_batsman_id required",
-			)
-		}
-	}
-
 	return nil
 }
 
