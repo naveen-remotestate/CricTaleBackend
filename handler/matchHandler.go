@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
@@ -213,13 +214,15 @@ func CreateMatch(c *gin.Context) {
 			return err
 		}
 
-		//create innings table
+		//create first innings table
+		now := time.Now()
 		InningID, err := dbHelper.CreateInning(
 			tx,
 			matchID,
 			"1",
 			battingFirstTeamID,
 			bowlingFirstTeamID,
+			&now,
 		)
 		if err != nil {
 			return err
@@ -611,7 +614,7 @@ func AddBallEvent(c *gin.Context) {
 	newTotalWickets := match.CurrentTotalWickets + inningsUpdate.WicketIncrement
 	isAllOut := newTotalWickets >= maxWickets
 	isOversCompleted := newLegalBalls >= match.Overs*6
-	isSecondInnings := match.CurrentInningNo == 2
+	isSecondInnings := match.CurrentInningsNo == 2
 	previousInningsScore := 0
 	if match.PreviousInningsScore != nil {
 		previousInningsScore = *match.PreviousInningsScore
@@ -693,8 +696,10 @@ func AddBallEvent(c *gin.Context) {
 	}
 
 	//end over strike rotation logic
-	if newLegalBalls > 0 && newLegalBalls%6 == 0 {
+	if isOverCompleted {
 		newStrikerID, newNonStrikerID = newNonStrikerID, newStrikerID
+		liveMatchUpdate.StrikerID = newStrikerID
+		liveMatchUpdate.NonStrikerID = newNonStrikerID
 	}
 
 	//-----checks that player is not already out
@@ -876,11 +881,26 @@ func AddBallEvent(c *gin.Context) {
 			if err != nil {
 				return err
 			}
+
+			if match.CurrentInningsNo == 2 {
+				var winnerTeamID *string
+				if newTotalRuns > *match.PreviousInningsScore {
+					winnerTeamID = &match.BattingTeamID
+				} else if newTotalRuns < *match.PreviousInningsScore {
+					winnerTeamID = &match.BowlingTeamID
+				} else {
+					winnerTeamID = nil
+				}
+				err = dbHelper.CompleteMatch(tx, match.MatchID, winnerTeamID)
+				if err != nil {
+					return err
+				}
+			}
 		}
 
 		//fmt.Println("7")
 		if isMatchCompleted {
-			err = dbHelper.CompleteMatch(tx, match.MatchID, winnerTeamID)
+			err = dbHelper.CompleteMatch(tx, match.MatchID, &winnerTeamID)
 			if err != nil {
 				return err
 			}
@@ -1077,7 +1097,7 @@ func StartSecondInnings(c *gin.Context) {
 		})
 		return
 	}
-	if match.CurrentInningNo != 1 {
+	if match.CurrentInningsNo != 1 {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "second innings already started",
 		})
@@ -1181,7 +1201,8 @@ func StartSecondInnings(c *gin.Context) {
 	var secondInningsID string
 
 	txErr := database.Tx(func(tx *sqlx.Tx) error {
-		secondInningsID, err = dbHelper.CreateInning(tx, match.MatchID, "2", battingTeamID, bowlingTeamID)
+		now := time.Now()
+		secondInningsID, err = dbHelper.CreateInning(tx, match.MatchID, "2", battingTeamID, bowlingTeamID, &now)
 		if err != nil {
 			return err
 		}

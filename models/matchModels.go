@@ -40,7 +40,7 @@ type MatchResponse struct {
 	TossDecision string `db:"toss_decision" json:"toss_decision"`
 	HostID       string `db:"hosted_by" json:"hosted_by"`
 
-	CurrentInningNo int `db:"current_innings_no" json:"current_innings_no"`
+	CurrentInningsNo int `db:"current_innings_no" json:"current_innings_no"`
 
 	Overs int `db:"overs" json:"overs"`
 
@@ -60,6 +60,7 @@ type MatchResponse struct {
 
 	PreviousInningsScore      *int `db:"previous_innings_score" json:"previous_innings_score"`
 	PreviousInningsLegalBalls *int `db:"previous_innings_legal_balls" json:"previous_innings_legal_balls"`
+	PreviousInningsWickets    *int `db:"previous_innings_wickets" json:"previous_innings_wickets"`
 
 	CurrentInningID string `db:"current_inning_id" json:"current_inning_id"`
 

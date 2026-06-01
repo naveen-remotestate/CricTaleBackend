@@ -3,6 +3,7 @@ package dbHelper
 import (
 	"CricTail_Backend/database"
 	"CricTail_Backend/models"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -110,17 +111,17 @@ func CreateMatch(
 	return matchID, nil
 }
 
-func CreateInning(tx *sqlx.Tx, matchID, inningNumber, battingFirstTeamID, bowlingFirstTeamID string) (string, error) {
+func CreateInning(tx *sqlx.Tx, matchID, inningNumber, battingFirstTeamID, bowlingFirstTeamID string, time *time.Time) (string, error) {
 	query := `
 		INSERT INTO innings (
 			match_id,
 			innings_no,
 		    batting_team_id,
-		    bowling_team_id
+		    bowling_team_id,
+		    start_time
 		)
 		VALUES (
-			$1,$2,$3,$4
-		)
+			$1,$2,$3,$4,$5)
 		RETURNING id
 	`
 
@@ -133,6 +134,7 @@ func CreateInning(tx *sqlx.Tx, matchID, inningNumber, battingFirstTeamID, bowlin
 		inningNumber,
 		battingFirstTeamID,
 		bowlingFirstTeamID,
+		time,
 	)
 
 	if err != nil {
@@ -250,10 +252,13 @@ func GetMatches() ([]models.MatchResponse, error) {
 
 			-- current inning
 			i.id AS current_inning_id,
+			i.batting_team_id,
+			i.bowling_team_id,
 
 			-- previous iinnng
 			pi.total_runs AS previous_innings_score,
 			pi.legal_balls AS previous_innings_legal_balls,
+			pi.total_wickets AS previous_innings_wickets,
 
 			-- striker
 			s.user_id AS striker_id,
@@ -891,16 +896,12 @@ func GetTeamPlayers(teamID string) ([]string, error) {
 	return playerIDs, nil
 }
 
-func CompleteMatch(
-	tx *sqlx.Tx,
-	matchID string,
-	winnerTeamID string,
-) error {
+func CompleteMatch(tx *sqlx.Tx, matchID string, winnerTeamID *string) error {
 
 	query := `
 		UPDATE matches
 		SET
-			winner_team_id = NULLIF($1, ''),
+			winner_team_id = $1,
 			end_time = NOW(),
 			updated_at = NOW()
 		WHERE id = $2
