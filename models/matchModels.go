@@ -258,6 +258,7 @@ type MatchScorecardResponse struct {
 
 type BallEventResponse struct {
 	ID                     string    `db:"id" json:"id"`
+	InningsID              string    `db:"innings_id" json:"innings_id"`
 	BallSequence           int       `db:"ball_sequence" json:"ball_sequence"`
 	OverNo                 int       `db:"over_no" json:"over_no"`
 	BallInOver             int       `db:"ball_in_over" json:"ball_in_over"`

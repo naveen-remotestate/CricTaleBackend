@@ -254,7 +254,7 @@ func GetMatches() ([]models.MatchResponse, error) {
 			i.id AS current_inning_id,
 			i.batting_team_id,
 			i.bowling_team_id,
-
+			i.is_completed AS is_completed,
 			-- previous iinnng
 			pi.total_runs AS previous_innings_score,
 			pi.legal_balls AS previous_innings_legal_balls,
@@ -363,8 +363,8 @@ func GetMatchByID(matchID string) (*models.MatchResponse, error) {
 
 			m.overs,
 
-			m.start_time,
-			m.end_time,
+			i.start_time AS start_time,
+			i.end_time AS end_time,
 
 			ta.id AS team_a_id,
 			ta.name AS team_a_name,

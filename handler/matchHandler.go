@@ -216,6 +216,7 @@ func CreateMatch(c *gin.Context) {
 
 		//create first innings table
 		now := time.Now()
+		//fmt.Printf("now = %#v\n", now)
 		InningID, err := dbHelper.CreateInning(
 			tx,
 			matchID,
