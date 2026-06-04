@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="ALL" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="b87dbd7c-af75-4685-913f-5dd6931975ae" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources/808cc11c-09cd-4add-9511-788b03c94654.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources/808cc11c-09cd-4add-9511-788b03c94654/storage_v2/_src_/database/crictail-db.MsEd_Q.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources/808cc11c-09cd-4add-9511-788b03c94654/storage_v2/_src_/database/crictail-db.MsEd_Q/schema/information_schema.FNRwLQ.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources/808cc11c-09cd-4add-9511-788b03c94654/storage_v2/_src_/database/crictail-db.MsEd_Q/schema/pg_catalog.0S1ZNQ.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources/808cc11c-09cd-4add-9511-788b03c94654/storage_v2/_src_/database/crictail-db.MsEd_Q/schema/public.abK9xQ.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources/data_sources_history.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/dbHelper/match.go" beforeDir="false" afterPath="$PROJECT_DIR$/database/dbHelper/match.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/dbHelper/player.go" beforeDir="false" afterPath="$PROJECT_DIR$/database/dbHelper/player.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/dbHelper/undo.go" beforeDir="false" afterPath="$PROJECT_DIR$/database/dbHelper/undo.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/handler/UndoHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/handler/UndoHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/handler/matchHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/handler/matchHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/matchModels.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/matchModels.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/playerModels.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/playerModels.go" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Go File" />
+      </list>
+    </option>
+  </component>
+  <component name="GOROOT" url="file://$USER_HOME$/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.9.linux-amd64" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 3,
+  "fromUser": false
+}]]></component>
+  <component name="ProjectId" id="3EcDPSsQq8Uj5IzEz0zOsK4TCXX" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultGoTemplateProperty": "Go File",
+    "Go Build.go build CricTail_Backend/cmd.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.GoLinterPluginOnboardingV2": "true",
+    "RunOnceActivity.GoLinterPluginStorageMigration": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.go.analysis.ui.options.defaults": "true",
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "Undo",
+    "go.sdk.automatically.set": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "/home/remotestate/Documents/CricTale/CricTaleBackend",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "to.speed.mode.migration.done": "true"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
+    ]
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration name="go build CricTail_Backend/cmd" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="CricTaleBackend" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="CricTail_Backend/cmd" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/cmd/main.go" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Go Build.go build CricTail_Backend/cmd" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-gosdk-72a9cf600ed8-3105c3b11fe0-org.jetbrains.plugins.go.sharedIndexes.bundled-GO-261.22158.291" />
+        <option value="bundled-js-predefined-d6986cc7102b-3bd3a6803838-JavaScript-GO-261.22158.291" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b87dbd7c-af75-4685-913f-5dd6931975ae" name="Changes" comment="" />
+      <created>1780468940342</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1780468940342</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

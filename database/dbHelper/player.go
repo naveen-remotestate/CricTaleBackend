@@ -56,7 +56,7 @@ WHERE user_id = $1;
 func GetPlayers(search string) ([]models.Player, error) {
 	players := make([]models.Player, 0)
 
-	query := `SELECT user_id,mobile_number, full_name FROM users where is_active=TRUE AND ($1 ='' OR full_name ILIKE '%' || $1 || '%' OR mobile_number ILIKE  '%' || $1 || '%'  )`
+	query := `SELECT user_id,mobile_number, full_name, created_at FROM users where is_active=TRUE AND ($1 ='' OR full_name ILIKE '%' || $1 || '%' OR mobile_number ILIKE  '%' || $1 || '%'  )`
 	err := database.DB.Select(&players, query, search)
 	return players, err
 }

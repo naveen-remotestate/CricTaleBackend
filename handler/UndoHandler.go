@@ -3,6 +3,7 @@ package handler
 import (
 	"CricTail_Backend/database"
 	"CricTail_Backend/database/dbHelper"
+	"CricTail_Backend/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -13,11 +14,8 @@ func UndoLastBall(c *gin.Context) {
 
 	matchID := c.Param("matchID")
 
-	match, err := dbHelper.GetMatchByID(
-		matchID,
-	)
+	match, err := dbHelper.GetMatchByID(matchID)
 	if err != nil {
-
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
@@ -25,28 +23,155 @@ func UndoLastBall(c *gin.Context) {
 	}
 
 	lastBall, err :=
-		dbHelper.GetLastBallEvent(
-			match.CurrentInningID,
-		)
-
+		dbHelper.GetLastBallEvent(match.CurrentInningID)
 	if err != nil {
-
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "ball not found",
 		})
 		return
 	}
 
-	txErr := database.Tx(
-		func(tx *sqlx.Tx) error {
+	var dismissedBatsmanID string
 
-			return dbHelper.DeleteBallEvent(
-				tx,
-				lastBall.ID,
-			)
-		},
-	)
+	//updating innigs table after deletion
+	inningsUpdate := models.InningsUpdate{
+		TotalRunsIncrement: -lastBall.TotalRuns, //sending negative value as update to reduce total runs
+	}
+
+	if lastBall.IsWicket {
+		inningsUpdate.WicketIncrement = -1 //same as runs for wicket
+		if lastBall.DismissedPlayerID != nil {
+			dismissedBatsmanID = *lastBall.DismissedPlayerID
+		}
+	}
+
+	if lastBall.IsLegalDelivery {
+		inningsUpdate.LegalBallIncrement = -1
+	}
+
+	if lastBall.ExtraRuns > 0 {
+
+		inningsUpdate.ExtrasIncrement = -lastBall.ExtraRuns
+		if lastBall.ExtraType != nil {
+			switch *lastBall.ExtraType {
+
+			case "WIDE":
+				inningsUpdate.WidesIncrement = -lastBall.ExtraRuns
+
+			case "NO_BALL":
+				inningsUpdate.NoBallsIncrement = -lastBall.ExtraRuns
+
+			case "BYE":
+				inningsUpdate.ByesIncrement = -lastBall.ExtraRuns
+
+			case "LEG_BYE":
+				inningsUpdate.LegByesIncrement = -lastBall.ExtraRuns
+			}
+		}
+	}
+
+	liveMatchUpdate := models.LiveMatchUpdate{}
+	liveMatchUpdate.TotalRunsIncrement = -lastBall.TotalRuns
+	if lastBall.IsWicket {
+		liveMatchUpdate.TotalWicketsIncrement = -1
+	}
+	if lastBall.IsLegalDelivery {
+		liveMatchUpdate.LegalBallsIncrement = -1
+	}
+	liveMatchUpdate.StrikerID = lastBall.StrikerID
+	liveMatchUpdate.NonStrikerID = lastBall.NonStrikerID
+	liveMatchUpdate.BowlerID = lastBall.BowlerID
+
+	battingUpdate := models.BattingScorecardUpdate{}
+	battingUpdate.RunsIncrement = -lastBall.RunsOffBat
+
+	if lastBall.IsLegalDelivery {
+		battingUpdate.BallsIncrement = -1
+	}
+	if lastBall.IsBoundaryFour {
+		battingUpdate.FoursIncrement = -1
+	}
+	if lastBall.IsBoundarySix {
+		battingUpdate.SixesIncrement = -1
+	}
+
+	//bowling scorecard table
+	bowlingUpdate := models.BowlingScorecardUpdate{}
+	bowlingUpdate.RunsConcededIncrement = -lastBall.TotalRuns
+	if lastBall.IsLegalDelivery {
+		bowlingUpdate.LegalBallsIncrement = -1
+	}
+	if lastBall.IsWicket {
+		bowlingUpdate.WicketsIncrement = -1
+	}
+	if lastBall.ExtraType != nil {
+		switch *lastBall.ExtraType {
+		case "WIDE":
+			bowlingUpdate.WidesIncrement = -lastBall.ExtraRuns
+		case "NO_BALL":
+			bowlingUpdate.NoBallsIncrement = -lastBall.ExtraRuns
+		}
+	}
+
+	txErr := database.Tx(func(tx *sqlx.Tx) error {
+		// first updating all the tables then at end we will delete the ball event
+		// innings Table
+		err := dbHelper.UpdateInningsAfterBall(tx, lastBall.InningsID, inningsUpdate)
+		if err != nil {
+			return err
+		}
+		//live match table
+		err = dbHelper.UpdateLiveMatchAfterBall(tx, match.MatchID, liveMatchUpdate)
+		if err != nil {
+			return err
+		}
+		//batting scorecard table
+		err = dbHelper.UpdateBattingScorecardAfterBall(tx, lastBall.InningsID, lastBall.StrikerID, battingUpdate)
+		if err != nil {
+			return err
+		}
+
+		if lastBall.IsWicket && lastBall.DismissedPlayerID != nil {
+			falseVal := false
+			restoreDismissal := models.BattingScorecardUpdate{
+				IsOut:               &falseVal,
+				DismissalType:       nil,
+				DismissedByBowlerID: nil,
+				FielderID:           nil,
+				ClearDismissal:      true,
+			}
+
+			err = dbHelper.UpdateBattingScorecardAfterBall(tx, lastBall.InningsID, dismissedBatsmanID, restoreDismissal)
+			if err != nil {
+				return err
+			}
+		}
+
+		err = dbHelper.UpdateBowlingScorecardAfterBall(tx, lastBall.InningsID, lastBall.BowlerID, bowlingUpdate)
+		if err != nil {
+			return err
+		}
+
+		err = dbHelper.ReopenInnings(tx, lastBall.InningsID) // called always because is_complete is being set to false which is already false
+		if err != nil {
+			return err
+		}
+
+		err = dbHelper.ReopenMatch(tx, match.MatchID) //same as reopen innings
+		if err != nil {
+			return err
+		}
+
+		err = dbHelper.DeleteBallEvent(tx, lastBall.ID)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
 	if txErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": txErr.Error(),
+		})
 		return
 	}
 

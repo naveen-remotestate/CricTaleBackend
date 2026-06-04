@@ -37,3 +37,35 @@ func DeleteBallEvent(tx *sqlx.Tx, ballEventID string) error {
 	_, err := tx.Exec(query, ballEventID)
 	return err
 }
+
+func ReopenInnings(tx *sqlx.Tx, inningsID string) error {
+
+	query := `
+		UPDATE innings
+		SET
+			is_completed = FALSE,
+			end_time = NULL,
+			updated_at = NOW()
+		WHERE id = $1
+	`
+
+	_, err := tx.Exec(query, inningsID)
+	return err
+}
+
+func ReopenMatch(tx *sqlx.Tx, matchID string) error {
+
+	query := `
+		UPDATE matches
+		SET
+			winner_team_id = NULL,
+			end_time = NULL,
+			updated_at = NOW()
+		WHERE id = $1
+	`
+
+	_, err := tx.Exec(query,matchID,
+	)
+
+	return err
+}

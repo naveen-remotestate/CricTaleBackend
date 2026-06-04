@@ -701,13 +701,22 @@ func UpdateBattingScorecardAfterBall(tx *sqlx.Tx, inningsID string, batsmanID st
 			balls_faced = balls_faced + $2,
 			fours = fours + $3,
 			sixes = sixes + $4,
-			is_out = $5,
-			dismissal_type = COALESCE($6, dismissal_type),
-			dismissed_by_bowler_id =COALESCE($7, dismissed_by_bowler_id),
-			fielder_id =COALESCE($8, fielder_id),
+			is_out = COALESCE($5, is_out),
+			dismissal_type = CASE
+			    WHEN $9 THEN NULL
+			    ELSE COALESCE($6, dismissal_type)
+			    END,
+		    dismissed_by_bowler_id = CASE
+		        WHEN $9 THEN NULL
+		        ELSE COALESCE($7, dismissed_by_bowler_id)
+		        END,
+		    fielder_id = CASE
+		        WHEN $9 THEN NULL
+		        ELSE COALESCE($8, fielder_id)
+		        END,
 			updated_at = NOW()
-		WHERE innings_id = $9
-			AND user_id = $10
+		WHERE innings_id = $10
+			AND user_id = $11
 	`
 
 	_, err := tx.Exec(
@@ -721,6 +730,8 @@ func UpdateBattingScorecardAfterBall(tx *sqlx.Tx, inningsID string, batsmanID st
 		update.DismissalType,
 		update.DismissedByBowlerID,
 		update.FielderID,
+		//for undo a ball event
+		update.ClearDismissal,
 
 		inningsID,
 		batsmanID,

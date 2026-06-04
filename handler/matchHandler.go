@@ -524,8 +524,9 @@ func AddBallEvent(c *gin.Context) {
 
 		battingUpdate.SixesIncrement = 1
 	}
+	trueVal := true
 	if event.IsWicket && event.WicketType != nil && *event.WicketType != "RETIRED_HURT" {
-		battingUpdate.IsOut = true
+		battingUpdate.IsOut = &trueVal
 
 		battingUpdate.DismissalType = event.WicketType
 
@@ -536,7 +537,7 @@ func AddBallEvent(c *gin.Context) {
 		}
 	}
 
-	//---------------Updating Bowling Table
+	//updating Bowling Table
 
 	bowlingUpdate := models.BowlingScorecardUpdate{}
 
@@ -599,7 +600,6 @@ func AddBallEvent(c *gin.Context) {
 	if IsStrikeRotating(event) {
 
 		newStrikerID = event.NonStrikerID
-
 		newNonStrikerID = event.StrikerID
 	}
 
@@ -647,8 +647,7 @@ func AddBallEvent(c *gin.Context) {
 
 	/// new bowler selection on over complition
 	isOverCompleted := event.IsLegalDelivery && newLegalBalls%6 == 0
-	if isOverCompleted &&
-		!isInningsCompleted {
+	if isOverCompleted && !isInningsCompleted {
 
 		if req.NextBowlerID == "" {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -837,8 +836,9 @@ func AddBallEvent(c *gin.Context) {
 				return err
 			}
 
+			trueVal := true
 			dismissedUpdate := models.BattingScorecardUpdate{
-				IsOut:               true,
+				IsOut:               &trueVal,
 				DismissalType:       battingUpdate.DismissalType,
 				DismissedByBowlerID: battingUpdate.DismissedByBowlerID,
 				FielderID:           battingUpdate.FielderID,

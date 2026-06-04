@@ -186,10 +186,11 @@ type BattingScorecardUpdate struct {
 	BallsIncrement      int     `json:"balls_increment"`
 	FoursIncrement      int     `json:"fours_increment"`
 	SixesIncrement      int     `json:"sixes_increment"`
-	IsOut               bool    `json:"is_out"`
+	IsOut               *bool   `json:"is_out"`
 	DismissalType       *string `json:"dismissal_type"`
 	DismissedByBowlerID *string `json:"dismissed_by_bowler_id"`
 	FielderID           *string `json:"fielder_id"`
+	ClearDismissal      bool
 }
 
 type BowlingScorecardUpdate struct {

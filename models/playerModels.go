@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type PlayerStats struct {
 	ID     string `db:"id" json:"id"`
 	UserID string `db:"user_id" json:"user_id"`
@@ -48,9 +50,10 @@ type PlayerStats struct {
 }
 
 type Player struct {
-	UserID       string `db:"user_id" json:"user_id"`
-	FullName     string `db:"full_name" json:"full_name"`
-	MobileNumber string `db:"mobile_number" json:"mobile_number"`
+	UserID       string    `db:"user_id" json:"user_id"`
+	FullName     string    `db:"full_name" json:"full_name"`
+	MobileNumber string    `db:"mobile_number" json:"mobile_number"`
+	CreatedAt    time.Time `db:"created_at" json:"created_at"`
 }
 
 type UpdatePlayer struct {
