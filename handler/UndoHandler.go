@@ -39,9 +39,19 @@ func UndoLastBall(c *gin.Context) {
 	}
 
 	if lastBall.IsWicket {
-		inningsUpdate.WicketIncrement = -1 //same as runs for wicket
 		if lastBall.DismissedPlayerID != nil {
 			dismissedBatsmanID = *lastBall.DismissedPlayerID
+		}
+		if lastBall.WicketType != nil {
+			switch *lastBall.WicketType {
+			case "BOWLED",
+				"CAUGHT",
+				"LBW",
+				"RUN_OUT",
+				"HIT_WICKET",
+				"STUMPED":
+				inningsUpdate.WicketIncrement = -1
+			}
 		}
 	}
 
@@ -72,8 +82,17 @@ func UndoLastBall(c *gin.Context) {
 
 	liveMatchUpdate := models.LiveMatchUpdate{}
 	liveMatchUpdate.TotalRunsIncrement = -lastBall.TotalRuns
-	if lastBall.IsWicket {
-		liveMatchUpdate.TotalWicketsIncrement = -1
+	if lastBall.IsWicket &&
+		lastBall.WicketType != nil {
+		switch *lastBall.WicketType {
+		case "BOWLED",
+			"CAUGHT",
+			"LBW",
+			"RUN_OUT",
+			"HIT_WICKET",
+			"STUMPED":
+			liveMatchUpdate.TotalWicketsIncrement = -1
+		}
 	}
 	if lastBall.IsLegalDelivery {
 		liveMatchUpdate.LegalBallsIncrement = -1
@@ -97,7 +116,15 @@ func UndoLastBall(c *gin.Context) {
 
 	//bowling scorecard table
 	bowlingUpdate := models.BowlingScorecardUpdate{}
+
 	bowlingUpdate.RunsConcededIncrement = -lastBall.TotalRuns
+
+	if lastBall.ExtraType != nil {
+		switch *lastBall.ExtraType {
+		case "BYE", "LEG_BYE": //bye legbye runs do not adds to bowler account
+			bowlingUpdate.RunsConcededIncrement = 0
+		}
+	}
 	if lastBall.IsLegalDelivery {
 		bowlingUpdate.LegalBallsIncrement = -1
 	}

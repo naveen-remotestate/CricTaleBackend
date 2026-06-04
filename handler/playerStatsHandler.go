@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jmoiron/sqlx"
 )
 
 func GetPlayerStats(c *gin.Context) {
@@ -60,4 +61,73 @@ func UpdatePlayerProfile(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "player profile updated successfully",
 	})
+}
+
+func ProcessBattingCareerStats(
+	tx *sqlx.Tx,
+	matchID string,
+) error {
+
+	battingStats, err := dbHelper.GetMatchBattingStats(matchID)
+	if err != nil {
+		return err
+	}
+
+	for _, stat := range battingStats {
+
+		err = dbHelper.UpdateBattingCareerStats(
+			tx,
+			stat,
+		)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func ProcessBowlingCareerStats(
+	tx *sqlx.Tx,
+	matchID string,
+) error {
+
+	bowlingStats, err := dbHelper.GetMatchBowlingStats(matchID)
+	if err != nil {
+		return err
+	}
+
+	for _, stat := range bowlingStats {
+
+		err = dbHelper.UpdateBowlingCareerStats(
+			tx,
+			stat,
+		)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func ProcessPlayerCareerStats(tx *sqlx.Tx, matchID string) error {
+
+	err := ProcessBattingCareerStats(
+		tx,
+		matchID,
+	)
+	if err != nil {
+		return err
+	}
+
+	err = ProcessBowlingCareerStats(
+		tx,
+		matchID,
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

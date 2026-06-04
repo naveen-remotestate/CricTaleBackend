@@ -285,3 +285,21 @@ type BallEventResponse struct {
 	DismissedByFielderName *string   `db:"dismissed_by_fielder_name" json:"dismissed_by_fielder_name"`
 	BowledAt               time.Time `db:"bowled_at" json:"bowled_at"`
 }
+
+type MatchBattingStats struct {
+	UserID     string `db:"user_id"`
+	Runs       int    `db:"runs"`
+	BallsFaced int    `db:"balls_faced"`
+	Fours      int    `db:"fours"`
+	Sixes      int    `db:"sixes"`
+	IsOut      bool   `db:"is_out"`
+}
+
+type MatchBowlingStats struct {
+	UserID       string `db:"user_id"`
+	LegalBalls   int    `db:"legal_balls"`
+	RunsConceded int    `db:"runs_conceded"`
+	Wickets      int    `db:"wickets"`
+	Wides        int    `db:"wides"`
+	NoBalls      int    `db:"no_balls"`
+}

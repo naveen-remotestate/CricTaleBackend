@@ -896,6 +896,7 @@ func AddBallEvent(c *gin.Context) {
 				if err != nil {
 					return err
 				}
+
 			}
 		}
 
@@ -905,8 +906,13 @@ func AddBallEvent(c *gin.Context) {
 			if err != nil {
 				return err
 			}
+
 		}
 
+		err = ProcessPlayerCareerStats(tx, match.MatchID)
+		if err != nil {
+			return err
+		}
 		return nil
 	})
 
