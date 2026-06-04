@@ -909,7 +909,7 @@ func AddBallEvent(c *gin.Context) {
 
 		}
 		if isMatchCompleted {
-			err = ProcessPlayerCareerStats(tx, match.MatchID)
+			err = ProcessPlayerCareerStats(tx, match.MatchID, &winnerTeamID)
 			if err != nil {
 				return err
 			}

@@ -771,11 +771,7 @@ func UpdateBowlingScorecardAfterBall(tx *sqlx.Tx, inningsID string, bowlerID str
 	return err
 }
 
-func UpdateLiveMatchAfterBall(
-	tx *sqlx.Tx,
-	matchID string,
-	update models.LiveMatchUpdate,
-) error {
+func UpdateLiveMatchAfterBall(tx *sqlx.Tx, matchID string, update models.LiveMatchUpdate) error {
 
 	query := `
 		UPDATE live_match

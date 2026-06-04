@@ -49,7 +49,6 @@ func StartServer(serverPort string) (router *gin.Engine) {
 	auth.POST("/create-match", handler.CreateMatch)
 
 	auth.POST("/ball-event", handler.AddBallEvent)
-	//auth.POST("/start-first-innings", handler.StartFirstInnings) //setting start time for first innings to NOW()
 	auth.POST("/start-second-innings", handler.StartSecondInnings)
 	auth.POST("/matches/:matchID/undo", handler.UndoLastBall)
 	profile := auth.Group("/player")

@@ -111,7 +111,7 @@ func ProcessBowlingCareerStats(
 	return nil
 }
 
-func ProcessPlayerCareerStats(tx *sqlx.Tx, matchID string) error {
+func ProcessPlayerCareerStats(tx *sqlx.Tx, matchID string, winnerTeamID *string) error {
 
 	err := ProcessBattingCareerStats(
 		tx,
@@ -121,12 +121,21 @@ func ProcessPlayerCareerStats(tx *sqlx.Tx, matchID string) error {
 		return err
 	}
 
-	err = ProcessBowlingCareerStats(
-		tx,
-		matchID,
-	)
+	err = ProcessBowlingCareerStats(tx, matchID)
 	if err != nil {
 		return err
+	}
+
+	err = dbHelper.UpdateMatchesPlayed(tx, matchID)
+	if err != nil {
+		return err
+	}
+
+	if winnerTeamID != nil {
+		err = dbHelper.UpdateMatchesWon(tx, *winnerTeamID)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
