@@ -1,13 +1,12 @@
 package dbHelper
 
 import (
-	"CricTail_Backend/database"
 	"CricTail_Backend/models"
 
 	"github.com/jmoiron/sqlx"
 )
 
-func GetMatchBattingStats(matchID string) ([]models.MatchBattingStats, error) {
+func GetMatchBattingStats(tx *sqlx.Tx, matchID string) ([]models.MatchBattingStats, error) {
 
 	query := `
 		SELECT
@@ -18,7 +17,6 @@ func GetMatchBattingStats(matchID string) ([]models.MatchBattingStats, error) {
 			bs.sixes,
 			bs.is_out
 		FROM batting_scorecards bs
-
 		INNER JOIN innings i
 			ON i.id = bs.innings_id
 
@@ -27,14 +25,14 @@ func GetMatchBattingStats(matchID string) ([]models.MatchBattingStats, error) {
 
 	var stats []models.MatchBattingStats
 
-	err := database.DB.Select(&stats, query, matchID)
+	err := tx.Select(&stats, query, matchID)
 	if err != nil {
 		return nil, err
 	}
 	return stats, nil
 }
 
-func GetMatchBowlingStats(matchID string) ([]models.MatchBowlingStats, error) {
+func GetMatchBowlingStats(tx *sqlx.Tx, matchID string) ([]models.MatchBowlingStats, error) {
 
 	query := `
 		SELECT
@@ -52,7 +50,7 @@ func GetMatchBowlingStats(matchID string) ([]models.MatchBowlingStats, error) {
 	`
 
 	var stats []models.MatchBowlingStats
-	err := database.DB.Select(&stats, query, matchID)
+	err := tx.Select(&stats, query, matchID)
 	if err != nil {
 		return nil, err
 	}

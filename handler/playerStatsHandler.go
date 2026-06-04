@@ -68,7 +68,7 @@ func ProcessBattingCareerStats(
 	matchID string,
 ) error {
 
-	battingStats, err := dbHelper.GetMatchBattingStats(matchID)
+	battingStats, err := dbHelper.GetMatchBattingStats(tx, matchID)
 	if err != nil {
 		return err
 	}
@@ -92,7 +92,7 @@ func ProcessBowlingCareerStats(
 	matchID string,
 ) error {
 
-	bowlingStats, err := dbHelper.GetMatchBowlingStats(matchID)
+	bowlingStats, err := dbHelper.GetMatchBowlingStats(tx, matchID)
 	if err != nil {
 		return err
 	}

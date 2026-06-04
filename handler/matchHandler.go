@@ -908,10 +908,11 @@ func AddBallEvent(c *gin.Context) {
 			}
 
 		}
-
-		err = ProcessPlayerCareerStats(tx, match.MatchID)
-		if err != nil {
-			return err
+		if isMatchCompleted {
+			err = ProcessPlayerCareerStats(tx, match.MatchID)
+			if err != nil {
+				return err
+			}
 		}
 		return nil
 	})
