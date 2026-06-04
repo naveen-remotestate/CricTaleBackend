@@ -101,8 +101,15 @@ func UndoLastBall(c *gin.Context) {
 	if lastBall.IsLegalDelivery {
 		bowlingUpdate.LegalBallsIncrement = -1
 	}
-	if lastBall.IsWicket {
-		bowlingUpdate.WicketsIncrement = -1
+	if lastBall.IsWicket && lastBall.WicketType != nil {
+		switch *lastBall.WicketType {
+		case "BOWLED",
+			"CAUGHT",
+			"LBW",
+			"STUMPED",
+			"HIT_WICKET":
+			bowlingUpdate.WicketsIncrement = -1
+		}
 	}
 	if lastBall.ExtraType != nil {
 		switch *lastBall.ExtraType {

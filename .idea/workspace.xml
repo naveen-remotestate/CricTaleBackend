@@ -5,19 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b87dbd7c-af75-4685-913f-5dd6931975ae" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources/808cc11c-09cd-4add-9511-788b03c94654.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources/808cc11c-09cd-4add-9511-788b03c94654/storage_v2/_src_/database/crictail-db.MsEd_Q.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources/808cc11c-09cd-4add-9511-788b03c94654/storage_v2/_src_/database/crictail-db.MsEd_Q/schema/information_schema.FNRwLQ.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources/808cc11c-09cd-4add-9511-788b03c94654/storage_v2/_src_/database/crictail-db.MsEd_Q/schema/pg_catalog.0S1ZNQ.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources/808cc11c-09cd-4add-9511-788b03c94654/storage_v2/_src_/database/crictail-db.MsEd_Q/schema/public.abK9xQ.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources/data_sources_history.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/dbHelper/match.go" beforeDir="false" afterPath="$PROJECT_DIR$/database/dbHelper/match.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/dbHelper/player.go" beforeDir="false" afterPath="$PROJECT_DIR$/database/dbHelper/player.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/dbHelper/undo.go" beforeDir="false" afterPath="$PROJECT_DIR$/database/dbHelper/undo.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/handler/UndoHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/handler/UndoHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/handler/matchHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/handler/matchHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/matchModels.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/matchModels.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/playerModels.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/playerModels.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
