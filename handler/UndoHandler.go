@@ -59,17 +59,19 @@ func UndoLastBall(c *gin.Context) {
 		inningsUpdate.LegalBallIncrement = -1
 	}
 
-	if lastBall.ExtraRuns > 0 {
+	if lastBall.ExtraRuns > 0 || lastBall.ExtraType != nil {
 
 		inningsUpdate.ExtrasIncrement = -lastBall.ExtraRuns
 		if lastBall.ExtraType != nil {
 			switch *lastBall.ExtraType {
 
 			case "WIDE":
-				inningsUpdate.WidesIncrement = -lastBall.ExtraRuns
+				inningsUpdate.WidesIncrement = -1
+				inningsUpdate.ExtrasIncrement -= 1
 
 			case "NO_BALL":
-				inningsUpdate.NoBallsIncrement = -lastBall.ExtraRuns
+				inningsUpdate.NoBallsIncrement = -1
+				inningsUpdate.ExtrasIncrement -= 1
 
 			case "BYE":
 				inningsUpdate.ByesIncrement = -lastBall.ExtraRuns
@@ -141,9 +143,9 @@ func UndoLastBall(c *gin.Context) {
 	if lastBall.ExtraType != nil {
 		switch *lastBall.ExtraType {
 		case "WIDE":
-			bowlingUpdate.WidesIncrement = -lastBall.ExtraRuns
+			bowlingUpdate.WidesIncrement = -1
 		case "NO_BALL":
-			bowlingUpdate.NoBallsIncrement = -lastBall.ExtraRuns
+			bowlingUpdate.NoBallsIncrement = -1
 		}
 	}
 
