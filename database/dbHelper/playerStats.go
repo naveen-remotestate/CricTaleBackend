@@ -73,7 +73,7 @@ func UpdateBattingCareerStats(tx *sqlx.Tx, stats models.MatchBattingStats) error
 			total_sixes =total_sixes + $4,
 			total_outs =total_outs +
 				CASE
-					WHEN $5 THEN 1
+					WHEN $5= true THEN 1
 					ELSE 0
 				END,
 			highest_run =GREATEST(
