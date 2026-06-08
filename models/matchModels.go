@@ -109,7 +109,7 @@ type AddBallEventRequest struct {
 	NextBowlerID string `json:"next_bowler_id"`
 }
 
-type MatchState struct {
+type LiveMatchState struct {
 	MatchID string `db:"match_id"`
 
 	CurrentInningsID string `db:"current_innings_id"`

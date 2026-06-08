@@ -63,10 +63,7 @@ func UpdatePlayerProfile(c *gin.Context) {
 	})
 }
 
-func ProcessBattingCareerStats(
-	tx *sqlx.Tx,
-	matchID string,
-) error {
+func ProcessBattingCareerStats(tx *sqlx.Tx, matchID string) error {
 
 	battingStats, err := dbHelper.GetMatchBattingStats(tx, matchID)
 	if err != nil {
@@ -87,10 +84,7 @@ func ProcessBattingCareerStats(
 	return nil
 }
 
-func ProcessBowlingCareerStats(
-	tx *sqlx.Tx,
-	matchID string,
-) error {
+func ProcessBowlingCareerStats(tx *sqlx.Tx, matchID string) error {
 
 	bowlingStats, err := dbHelper.GetMatchBowlingStats(tx, matchID)
 	if err != nil {

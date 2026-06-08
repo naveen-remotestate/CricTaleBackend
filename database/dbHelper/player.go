@@ -105,3 +105,96 @@ func UpdatePlayerProfile(UserID, FullName, BattingStyle, BowlingStyle string) er
 
 	return nil
 }
+
+func GetTeamPlayerCount(teamID string) (int, error) {
+
+	query := `
+		SELECT COUNT(*)
+		FROM team_players
+		WHERE team_id = $1
+	`
+
+	var count int
+
+	err := database.DB.Get(
+		&count,
+		query,
+		teamID,
+	)
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
+func IsPlayerOut(inningsID string, userID string) (bool, error) {
+
+	query := `
+		SELECT is_out
+		FROM batting_scorecards
+		WHERE innings_id = $1
+			AND user_id = $2
+	`
+
+	var isOut bool
+
+	err := database.DB.Get(
+		&isOut,
+		query,
+		inningsID,
+		userID,
+	)
+	if err != nil {
+		return false, err
+	}
+
+	return isOut, nil
+}
+
+// has the player been out before or if he is coming to bat again after getting out
+func IsPlayerAlreadyOut(inningsID string, userID string) (bool, error) {
+	query := `
+		SELECT EXISTS (
+			SELECT 1
+			FROM batting_scorecards
+			WHERE innings_id = $1
+				AND user_id = $2
+				AND is_out = TRUE
+		)
+	`
+
+	var exists bool
+
+	err := database.DB.Get(&exists, query, inningsID, userID)
+	if err != nil {
+		return false, err
+	}
+
+	return exists, nil
+}
+
+func IsPlayerInTeam(teamID string, userID string) (bool, error) {
+
+	query := `
+		SELECT EXISTS (
+			SELECT 1
+			FROM team_players
+			WHERE team_id = $1
+				AND user_id = $2
+		)
+	`
+
+	var exists bool
+	err := database.DB.Get(
+		&exists,
+		query,
+		teamID,
+		userID,
+	)
+	if err != nil {
+		return false, err
+	}
+
+	return exists, nil
+}
