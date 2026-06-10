@@ -303,3 +303,8 @@ type MatchBowlingStats struct {
 	Wides        int    `db:"wides"`
 	NoBalls      int    `db:"no_balls"`
 }
+
+type RetiredHurtRequest struct {
+	RetiredPlayerID string `json:"retired_player_id"`
+	NextBatsmanID   string `json:"next_batsman_id"`
+}

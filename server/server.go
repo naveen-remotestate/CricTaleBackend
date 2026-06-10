@@ -46,6 +46,8 @@ func StartServer(serverPort string) (router *gin.Engine) {
 	auth.POST("/logout", handler.LogoutUser) //either POST(mostly) or DELETE
 	auth.GET("/players", handler.GetPlayers)
 
+	auth.POST("/matches/:matchID/retired-hurt", handler.RetiredHurt)
+
 	auth.POST("/create-match", handler.CreateMatch)
 
 	auth.POST("/ball-event", handler.AddBallEvent)

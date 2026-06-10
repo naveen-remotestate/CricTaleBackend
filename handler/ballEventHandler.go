@@ -637,3 +637,68 @@ func GetBallEvents(c *gin.Context) {
 		"ball_events": ballEvents,
 	})
 }
+
+func RetiredHurt(c *gin.Context) {
+	matchID := c.Param("matchID")
+	var req models.RetiredHurtRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
+		return
+	}
+
+	match, err := dbHelper.GetMatchByID(matchID)
+	if err != nil || match == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "match not found"})
+		return
+	}
+
+	newStrikerID := *match.StrikerID
+	newNonStrikerID := *match.NonStrikerID
+
+	if req.RetiredPlayerID == newStrikerID {
+		newStrikerID = req.NextBatsmanID
+	} else if req.RetiredPlayerID == newNonStrikerID {
+		newNonStrikerID = req.NextBatsmanID
+	} else {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "retired player currently not batting"})
+		return
+	}
+
+	txErr := database.Tx(func(tx *sqlx.Tx) error {
+		retire := "RETIRED_HURT"
+		retiredUpdate := models.BattingScorecardUpdate{
+			DismissalType: &retire,
+		}
+		err = dbHelper.UpdateBattingScorecardAfterBall(tx, match.CurrentInningID, req.RetiredPlayerID, retiredUpdate)
+		if err != nil {
+			return err
+		}
+
+		nextUpdate := models.BattingScorecardUpdate{
+			ClearDismissal: true,
+		}
+		err = dbHelper.UpdateBattingScorecardAfterBall(tx, match.CurrentInningID, req.NextBatsmanID, nextUpdate)
+		if err != nil {
+			return err
+		}
+
+		liveUpdate := models.LiveMatchUpdate{
+			StrikerID:    newStrikerID,
+			NonStrikerID: newNonStrikerID,
+			BowlerID:     *match.BowlerID,
+		}
+		err = dbHelper.UpdateLiveMatchAfterBall(tx, matchID, liveUpdate)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+
+	if txErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": txErr.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "player retired successfully"})
+}
