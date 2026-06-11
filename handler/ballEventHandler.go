@@ -286,7 +286,7 @@ func AddBallEvent(c *gin.Context) {
 	isInningsCompleted := isAllOut || isOversCompleted || isTargetChased
 
 	isMatchCompleted := isSecondInnings && isInningsCompleted
-	var winnerTeamID string
+	var winnerTeamID *string
 
 	if isMatchCompleted {
 		firstInningsScore := 0
@@ -295,11 +295,11 @@ func AddBallEvent(c *gin.Context) {
 		}
 		secondInningsScore := newTotalRuns
 		if secondInningsScore > firstInningsScore {
-			winnerTeamID =
-				match.BattingTeamID
+			winnerTeamID = &match.BattingTeamID
 		} else if secondInningsScore < firstInningsScore {
-			winnerTeamID =
-				match.BowlingTeamID
+			winnerTeamID = &match.BowlingTeamID
+		} else {
+			winnerTeamID = nil
 		}
 	}
 
@@ -543,34 +543,16 @@ func AddBallEvent(c *gin.Context) {
 			if err != nil {
 				return err
 			}
-
-			if match.CurrentInningsNo == 2 {
-				var winnerTeamID *string
-				if newTotalRuns > *match.PreviousInningsScore {
-					winnerTeamID = &match.BattingTeamID
-				} else if newTotalRuns < *match.PreviousInningsScore {
-					winnerTeamID = &match.BowlingTeamID
-				} else {
-					winnerTeamID = nil
-				}
-				err = dbHelper.CompleteMatch(tx, match.MatchID, winnerTeamID)
-				if err != nil {
-					return err
-				}
-
-			}
 		}
 
 		//fmt.Println("7")
 		if isMatchCompleted {
-			err = dbHelper.CompleteMatch(tx, match.MatchID, &winnerTeamID)
+			err = dbHelper.CompleteMatch(tx, match.MatchID, winnerTeamID)
 			if err != nil {
 				return err
 			}
 
-		}
-		if isMatchCompleted {
-			err = ProcessPlayerCareerStats(tx, match.MatchID, &winnerTeamID)
+			err = ProcessPlayerCareerStats(tx, match.MatchID, winnerTeamID)
 			if err != nil {
 				return err
 			}

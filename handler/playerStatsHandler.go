@@ -57,7 +57,6 @@ func UpdatePlayerProfile(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "update player failed"}) //"update player failed"
 		return
 	}
-
 	c.JSON(http.StatusOK, gin.H{
 		"message": "player profile updated successfully",
 	})
@@ -80,7 +79,6 @@ func ProcessBattingCareerStats(tx *sqlx.Tx, matchID string) error {
 			return err
 		}
 	}
-
 	return nil
 }
 
@@ -93,10 +91,7 @@ func ProcessBowlingCareerStats(tx *sqlx.Tx, matchID string) error {
 
 	for _, stat := range bowlingStats {
 
-		err = dbHelper.UpdateBowlingCareerStats(
-			tx,
-			stat,
-		)
+		err = dbHelper.UpdateBowlingCareerStats(tx, stat)
 		if err != nil {
 			return err
 		}
@@ -107,10 +102,7 @@ func ProcessBowlingCareerStats(tx *sqlx.Tx, matchID string) error {
 
 func ProcessPlayerCareerStats(tx *sqlx.Tx, matchID string, winnerTeamID *string) error {
 
-	err := ProcessBattingCareerStats(
-		tx,
-		matchID,
-	)
+	err := ProcessBattingCareerStats(tx, matchID)
 	if err != nil {
 		return err
 	}
