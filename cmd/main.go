@@ -4,14 +4,30 @@ import (
 	"CricTail_Backend/database"
 	"CricTail_Backend/server"
 	"fmt"
+	"os"
 )
 
 func main() {
-	dbHost := "localhost"
-	dbPort := "5432"
-	dbUser := "naveen"
-	dbPassword := "naveen"
-	dbName := "crictail-db"
+	dbHost := os.Getenv("DB_HOST")
+	if dbHost == "" {
+		dbHost = "localhost"
+	}
+	dbPort := os.Getenv("DB_PORT")
+	if dbPort == "" {
+		dbPort = "5432"
+	}
+	dbUser := os.Getenv("DB_USER")
+	if dbUser == "" {
+		dbUser = "naveen"
+	}
+	dbPassword := os.Getenv("DB_PASSWORD")
+	if dbPassword == "" {
+		dbPassword = "naveen"
+	}
+	dbName := os.Getenv("DB_NAME")
+	if dbName == "" {
+		dbName = "crictail-db"
+	}
 	sslMode := database.SSLModeDisable
 	serverPort := ":8080"
 
