@@ -69,25 +69,20 @@ func AddBallEvent(c *gin.Context) {
 	totalRuns :=
 		req.RunsOffBat +
 			req.ExtraRuns
-
+	//penality 1 run on wide and no ball
 	if req.ExtraType != nil && (*req.ExtraType == "WIDE" || *req.ExtraType == "NO_BALL") {
 		totalRuns += 1
 	}
 
-	lastBallSequence, err :=
-		dbHelper.GetLastBallSequence(
-			match.CurrentInningID,
-		)
+	lastBallSequence, err := dbHelper.GetLastBallSequence(match.CurrentInningID)
 	if err != nil {
-
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "failed to get last ball sequence",
 		})
 		return
 	}
 
-	nextBallSequence :=
-		lastBallSequence + 1
+	nextBallSequence := lastBallSequence + 1
 	event := models.BallEventInsert{
 
 		InningsID: match.CurrentInningID,
@@ -138,32 +133,19 @@ func AddBallEvent(c *gin.Context) {
 
 	// extras breakdown
 	if event.ExtraType != nil {
-
 		inningsUpdate.ExtrasIncrement = event.ExtraRuns
-
 		switch *event.ExtraType {
-
 		case "WIDE":
-
 			inningsUpdate.WidesIncrement = 1
-
 			inningsUpdate.ExtrasIncrement = event.ExtraRuns + 1
-
 		case "NO_BALL":
-
 			inningsUpdate.NoBallsIncrement = 1
-
 			inningsUpdate.ExtrasIncrement = 1
-
 		case "BYE":
-
 			inningsUpdate.ByesIncrement = event.ExtraRuns
 			inningsUpdate.ExtrasIncrement = event.ExtraRuns
-
 		case "LEG_BYE":
-
 			inningsUpdate.LegByesIncrement = event.ExtraRuns
-
 			inningsUpdate.ExtrasIncrement = event.ExtraRuns
 		}
 	}
@@ -199,41 +181,31 @@ func AddBallEvent(c *gin.Context) {
 	}
 
 	//updating Bowling Table
-
 	bowlingUpdate := models.BowlingScorecardUpdate{}
-
 	if event.IsLegalDelivery {
-
 		bowlingUpdate.LegalBallsIncrement = 1
 	}
 
-	bowlingUpdate.RunsConcededIncrement =
-		event.TotalRuns
-
+	//bye legbye runs does not go to bowlers account
+	bowlingUpdate.RunsConcededIncrement = event.TotalRuns
 	if event.ExtraType != nil {
-
 		switch *event.ExtraType {
-
 		case "BYE", "LEG_BYE":
 			bowlingUpdate.RunsConcededIncrement = 0
 		}
 	}
 
 	if event.ExtraType != nil {
-
 		if *event.ExtraType == "WIDE" {
 			bowlingUpdate.WidesIncrement = 1
 		}
-
 		if *event.ExtraType == "NO_BALL" {
 			bowlingUpdate.NoBallsIncrement = 1
 		}
 	}
 
 	if event.IsWicket && event.WicketType != nil {
-
 		switch *event.WicketType {
-
 		case "BOWLED",
 			"CAUGHT",
 			"LBW",
@@ -259,7 +231,6 @@ func AddBallEvent(c *gin.Context) {
 	newNonStrikerID := event.NonStrikerID
 
 	if IsStrikeRotating(event) {
-
 		newStrikerID = event.NonStrikerID
 		newNonStrikerID = event.StrikerID
 	}
@@ -299,7 +270,7 @@ func AddBallEvent(c *gin.Context) {
 		} else if secondInningsScore < firstInningsScore {
 			winnerTeamID = &match.BowlingTeamID
 		} else {
-			winnerTeamID = nil
+			winnerTeamID = nil //in case of tie
 		}
 	}
 
